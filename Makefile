@@ -20,8 +20,6 @@ apply_infra: init
 	@echo "${C_GREEN}Infra is Ready ${C_RESET}"
 .PHONY: apply_infra
 
-
-############################
 prep_db:
 	$(DOCKERTF) plan -var tasktemplate=cdprep.json -out ./db.plan
 	$(DOCKERTF) apply ./db.plan

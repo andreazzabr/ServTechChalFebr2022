@@ -36,6 +36,8 @@ jobs:
           path: terraform/infra.plan
 
   infra_apply:
+    on:
+      workflow_dispatch:
     name: "Apply infra"
     runs-on: ubuntu-latest
     needs: infra_plan
@@ -53,14 +55,16 @@ jobs:
         run: make apply_infra
 
 
-#   prep_db:
-#     name: Terraform Prep DB
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout
-#         uses: actions/checkout@v2
+  # prep_db:
+  #   on:
+  #     workflow_dispatch:
+  #   name: Terraform Prep DB
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
 
-#       - name: Terraform Prep DB
-#         id: prep_db
-#         if: ${{ env.REFRESH_DB == 'true' }} || github.ref == 'refs/heads/main'
-#         run: make apply
+  #     - name: Terraform Prep DB
+  #       id: prep_db
+  #       if: ${{ env.REFRESH_DB == 'true' }} # || github.ref == 'refs/heads/main'
+  #       run: make apply
