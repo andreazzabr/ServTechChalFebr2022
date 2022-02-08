@@ -16,7 +16,7 @@ env:
   TF_BACKEND_BUCKET: andreazza
   TF_BACKEND_KEY: srvntechchallenge
   REFRESH_DB: true
-  DESTROY_EVERYTHING: notyet
+  DESTROY_EVERYTHING: yesplease
 
 
 jobs:
@@ -60,6 +60,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        if: ${{ env.DESTROY_EVERYTHING == 'yesplease' }}
       
       - name: Terraform Apply Infra
         run: make destroy_everything
