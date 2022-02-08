@@ -50,7 +50,7 @@ create_everything:
 	make dnsname
 .PHONY: create_everything
 
-destroy_everything:
+destroy_everything: init
 	$(DOCKERTF) destroy -auto-approve
 .PHONY: destroy_everything
 
