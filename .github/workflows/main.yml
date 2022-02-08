@@ -71,7 +71,7 @@ jobs:
     name: "Destroy everything"
     runs-on: ubuntu-latest
     needs: infra_apply
-    if: ${{ DESTROY_EVERYTHING == 'true' }}
+    if: env.DESTROY_EVERYTHING == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
