@@ -38,7 +38,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-        - name: Terraform Apply Infra
+      - name: Terraform Apply Infra
         id: plan
         run: make apply_infra
 
