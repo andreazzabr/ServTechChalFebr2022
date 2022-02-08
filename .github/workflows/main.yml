@@ -47,7 +47,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: infra plan
-          path: terraform/infra.plan
+          path: terraform
       
       - name: Terraform Apply Infra
         run: make apply_infra
