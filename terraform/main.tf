@@ -1,0 +1,39 @@
+module "infra" {
+  source  = "./infra"
+  dbchangeapplyimmediately = var.dbchangeapplyimmediately
+  dbengine = var.dbengine
+  dbengineversion = var.dbengineversion
+  dbname = var.dbname
+  dbusername = var.dbusername
+  dnshosts = var.dnshosts
+  instanceclass = var.instanceclass
+  privatesubnets = var.privatesubnets
+  projectname = var.projectname
+  publicsubnets = var.publicsubnets
+  recoverywindow = var.recoverywindow
+  region = var.region
+  skipfinalsnapshot = var.skipfinalsnapshot
+  storageencrypted = var.storageencrypted
+  vpccidr = var.vpccidr
+}
+module "ecsservice" {
+  source = "./ecsservice"
+  albtg = module.infra.albtg
+  containerimage = var.containerimage
+  dbhost = module.infra.dbhost
+  dbname = var.dbname
+  dbpassword = module.infra.dbpassword
+  dbusername = var.dbusername
+  ecscluster = module.infra.ecscluster
+  ecsrole = module.infra.ecsrole
+  ecsservicedesiredcount = var.ecsservicedesiredcount
+  ecssg = module.infra.ecssg
+  ecssubnets = module.infra.publicsubnetids
+  projectname = var.projectname
+  taskdefinitioncpu = var.taskdefinitioncpu
+  taskdefinitionmem = var.taskdefinitionmem
+  tasktemplate = var.tasktemplate
+  vpccidr = var.vpccidr
+  vpcid = module.infra.vpcid
+
+}

@@ -1,0 +1,19 @@
+---
+version: '3.5'
+services: 
+    tf:
+        image: hashicorp/terraform:1.1.5
+        working_dir: /terraform
+        volumes: 
+            - $PWD/terraform:/terraform
+        environment: 
+            - AWS_ACCESS_KEY_ID
+            - AWS_SECRET_ACCESS_KEY
+            - AWS_DEFAULT_REGION
+    aws:
+        image: amazon/aws-cli:2.4.15
+        environment: 
+            - AWS_ACCESS_KEY_ID
+            - AWS_SECRET_ACCESS_KEY
+            - AWS_DEFAULT_REGION
+

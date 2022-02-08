@@ -1,0 +1,24 @@
+[
+    {
+    "name":"gol-srvn",
+    "image": "${containerimage}",
+    "cpu": 0,
+    "memory": 512,
+    "portMappings": [
+        {
+        "protocol": "tcp",
+        "containerPort": 80
+        }
+    ],
+    "environment" : [
+        { "name": "VTT_DBHOST", "value": "${dbhost}" },
+        { "name": "VTT_DBNAME", "value": "${dbname}" },
+        { "name": "VTT_DBUSER", "value": "${dbusername}" },
+        { "name": "VTT_DBPASSWORD", "value": "${dbpassword}" },
+        { "name": "VTT_DBPORT", "value": "5432" },
+        { "name": "VTT_LISTENHOST", "value": "0.0.0.0" },
+        { "name": "VTT_LISTENPORT", "value": "80" }
+    ],
+    "command": ["serve"]
+    }
+]  
