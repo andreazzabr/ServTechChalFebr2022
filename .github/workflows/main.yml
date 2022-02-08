@@ -20,15 +20,20 @@ env:
 
 jobs:
   infra_plan:
-    name: "Terraform Plan"
+    name: "Plan Infra"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Terraform Plan
-        id: plan
+      - name: Terraform Plan Infra
         run: make plan_infra
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: infra plan
+          path: terraform/infra.plan
 
   infra_apply:
     name: "Apply infra"
@@ -38,8 +43,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Download a single artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: infra plan
+      
       - name: Terraform Apply Infra
-        id: plan
         run: make apply_infra
 
 

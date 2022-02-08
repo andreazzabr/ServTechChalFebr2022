@@ -16,7 +16,7 @@ plan_infra: init
 .PHONY: plan_infra
 
 apply_infra: init
-	$(DOCKERTF) apply ./infra.plan
+	$(DOCKERTF) show ./infra.plan
 	@echo "${C_GREEN}Infra is Ready ${C_RESET}"
 .PHONY: apply_infra
 
