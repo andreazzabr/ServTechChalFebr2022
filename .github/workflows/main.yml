@@ -98,18 +98,18 @@ jobs:
       - name: Load Balancer Public Address
         run: make dnsname
 
-  destroy_everything:
-    name: "Destroy everything"
+  destroy:
+    name: "Destroy Infra"
     runs-on: ubuntu-latest
     needs: serve
     steps:
       - name: Checkout
+        if: ${{ env.DESTROY == 'true' }}
         uses: actions/checkout@v2
-        if: ${{ env.DESTROY == 'true' }}
       
-      - name: Terraform Apply Infra
+      - name: Terraform Destroy Infra
         if: ${{ env.DESTROY == 'true' }}
-        run: make destroy_everything
+        run: make destroy
 
       - name: Update Destroy var
         if: ${{ env.DESTROY == 'true' }} 
