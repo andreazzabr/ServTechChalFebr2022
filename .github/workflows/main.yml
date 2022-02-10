@@ -25,8 +25,7 @@ env:
   RUN_PIPELINE: true
 
 jobs:
-  run_if:
-    if: ${{ RUN_PIPELINE == 'true' }}
+  if: ${{ RUN_PIPELINE == 'true' }}
 
   infra_plan:
     name: "TF Plan Infra"
