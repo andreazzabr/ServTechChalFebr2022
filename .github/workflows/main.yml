@@ -94,9 +94,6 @@ jobs:
       - name: Terraform Apply Infra
         run: make serve
 
-      - name: Cluster Address
-        run: make dnsname
-
   destroy_everything:
     name: "Destroy everything"
     runs-on: ubuntu-latest

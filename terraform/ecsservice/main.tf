@@ -3,7 +3,7 @@ resource "aws_ecs_service" "ecs-service" {
   cluster = var.ecscluster
   task_definition = aws_ecs_task_definition.goltask.arn
   desired_count = var.ecsservicedesiredcount
-  # force_new_deployment = true
+  force_new_deployment = true
   launch_type = "FARGATE"
   network_configuration {
     subnets = var.ecssubnets

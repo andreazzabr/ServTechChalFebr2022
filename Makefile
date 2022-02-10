@@ -34,8 +34,8 @@ prep_db: init
 
 
 serve: init
-	$(DOCKERTF) plan -target module.ecsservice -out ./serve.plan -destroy
-	$(DOCKERTF) apply ./serve.plan
+	# $(DOCKERTF) plan -target module.ecsservice -out ./serve.plan -destroy
+	# $(DOCKERTF) apply ./serve.plan
 	$(DOCKERTF) plan -target module.ecsservice -out ./serve.plan
 	$(DOCKERTF) apply ./serve.plan
 .PHONY: serve
