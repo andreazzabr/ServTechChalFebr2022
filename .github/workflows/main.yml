@@ -69,7 +69,6 @@ jobs:
         run: echo "good stuff"
 
       - name: Update var
-        uses: actions/checkout@v2
         if: ${{ env.REFRESH_DB == 'true' }} 
         run: |
           ls
