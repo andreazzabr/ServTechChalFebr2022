@@ -23,8 +23,8 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_DEFAULT_REGION: ap-southeast-2
   UPDATE_DB: false
-  DESTROY: false
-  RUN_PIPELINE: false
+  DESTROY: true
+  RUN_PIPELINE: true
 
 
 jobs:
@@ -74,11 +74,11 @@ jobs:
     needs: infra_apply
     steps:
       - name: Checkout
-        if: ${{ env.UPDATE_DB == 'true' }} && ${{ env.RUN_PIPELINE == 'true' }}
+        if: ${{ env.UPDATE_DB == 'true' && env.RUN_PIPELINE == 'true' }}
         uses: actions/checkout@v2
 
       - name: Terraform Prep DB
-        if: ${{ env.UPDATE_DB == 'true' }} && ${{ env.RUN_PIPELINE == 'true' }}
+        if: ${{ env.UPDATE_DB == 'true' && env.RUN_PIPELINE == 'true' }}
         run: make prep_db
 
   serve:
