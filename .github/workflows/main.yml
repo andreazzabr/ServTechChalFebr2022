@@ -86,7 +86,6 @@ jobs:
 
   destroy_everything:
     name: "Destroy everything"
-    if: ${{ $env.DESTROY == 'true' }}
     runs-on: ubuntu-latest
     # needs: infra_apply
     steps:
