@@ -2,6 +2,7 @@ name: "Servian TechChallenge"
 on:
   push:
     paths:
+    - '.github/workflows/**'
     - 'terraform/**'
     - docker-compose.yml
     - Makefile
@@ -9,11 +10,12 @@ on:
       - main
   pull_request:
     paths:
+    - '.github/workflows/**'
     - 'terraform/**'
     - docker-compose.yml
     - Makefile
     branches:
-      - main
+      - main   
 env:
   TF_BACKEND_BUCKET: ${{ secrets.TF_BACKEND_BUCKET }}
   TF_BACKEND_KEY: ${{ secrets.TF_BACKEND_KEY }}
@@ -22,6 +24,7 @@ env:
   AWS_DEFAULT_REGION: ap-southeast-2
   UPDATE_DB: false
   DESTROY: true
+  RUN_PIPELINE: true
 
 
 jobs:
@@ -30,12 +33,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
+        if: ${{ env.RUN_PIPELINE == 'true' }}
         uses: actions/checkout@v2
 
       - name: Terraform Plan Infra
+        if: ${{ env.RUN_PIPELINE == 'true' }}
         run: make plan_infra
 
       - name: Upload artifact
+        if: ${{ env.RUN_PIPELINE == 'true' }}
         uses: actions/upload-artifact@v2
         with:
           name: infra plan
@@ -48,15 +54,18 @@ jobs:
     needs: infra_plan
     steps:
       - name: Checkout
+        if: ${{ env.RUN_PIPELINE == 'true' }}
         uses: actions/checkout@v2
 
       - name: Download a single artifact
+        if: ${{ env.RUN_PIPELINE == 'true' }}
         uses: actions/download-artifact@v2
         with:
           name: infra plan
           path: terraform
       
       - name: Terraform Apply Infra
+        if: ${{ env.RUN_PIPELINE == 'true' }}
         run: make apply_infra
 
   prep_db:
@@ -65,19 +74,20 @@ jobs:
     needs: infra_apply
     steps:
       - name: Checkout
-        if: ${{ env.UPDATE_DB == 'true' }}
+        if: ${{ env.UPDATE_DB == 'true' }} && ${{ env.RUN_PIPELINE == 'true' }}
         uses: actions/checkout@v2
         with:
           token: ${{ secrets.WORKFLOW_TOKEN }}
 
       - name: Terraform Prep DB
-        if: ${{ env.UPDATE_DB == 'true' }} 
+        if: ${{ env.UPDATE_DB == 'true' }} && ${{ env.RUN_PIPELINE == 'true' }}
         run: make prep_db
 
       - name: "Update var: Update_DB"
-        if: ${{ env.UPDATE_DB == 'true' }} 
+        if: ${{ env.UPDATE_DB == 'true' }} && ${{ env.RUN_PIPELINE == 'true' }}
         run: |
-          sed -i "17,25 s/UPDATE_DB: true/UPDATE_DB: false/" .github/workflows/main.yml
+          sed -i "19,27 s/UPDATE_DB: true/UPDATE_DB: false/" .github/workflows/main.yml
+          sed -i "19,27 s/RUN_PIPELINE: true/RUN_PIPELINE: false/" .github/workflows/main.yml
           git config --local user.email "$(git log --format='%ae' HEAD^!)"
           git config --local user.name "$(git log --format='%an' HEAD^!)"
           git add .
@@ -90,12 +100,15 @@ jobs:
     needs: prep_db
     steps:
       - name: Checkout
+        if: ${{ env.RUN_PIPELINE == 'true' }}
         uses: actions/checkout@v2
       
       - name: Terraform Apply Infra
+        if: ${{ env.RUN_PIPELINE == 'true' }}
         run: make serve
 
       - name: Load Balancer Public Address
+        if: ${{ env.RUN_PIPELINE == 'true' }}
         run: make dnsname
 
   destroy:
@@ -104,19 +117,20 @@ jobs:
     needs: serve
     steps:
       - name: Checkout
-        if: ${{ env.DESTROY == 'true' }}
+        if: ${{ env.DESTROY == 'true' }} && ${{ env.RUN_PIPELINE == 'true' }}
         uses: actions/checkout@v2
         with:
           token: ${{ secrets.WORKFLOW_TOKEN }}
       
       - name: Terraform Destroy Infra
-        if: ${{ env.DESTROY == 'true' }}
+        if: ${{ env.DESTROY == 'true' }} && ${{ env.RUN_PIPELINE == 'true' }}
         run: make destroy
 
       - name: "Update var: Destroy"
-        if: ${{ env.DESTROY == 'true' }} 
+        if: ${{ env.DESTROY == 'true' }} && ${{ env.RUN_PIPELINE == 'true' }}
         run: |
-          sed -i "17,25 s/DESTROY: true/DESTROY: false/" .github/workflows/main.yml
+          sed -i "19,27 s/DESTROY: true/DESTROY: false/" .github/workflows/main.yml
+          sed -i "19,27 s/RUN_PIPELINE: true/RUN_PIPELINE: false/" .github/workflows/main.yml
           git config --local user.email "$(git log --format='%ae' HEAD^!)"
           git config --local user.name "$(git log --format='%an' HEAD^!)"
           git add .
