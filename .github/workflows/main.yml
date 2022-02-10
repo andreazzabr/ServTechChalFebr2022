@@ -58,11 +58,12 @@ jobs:
   prep_db:
     name: Terraform Prep DB
     runs-on: ubuntu-latest
-    env:
-      github_token: ${{ secrets.WORKFLOW_TOKEN }}
+    # env:
+    #   workflow_token: ${{ secrets.WORKFLOW_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        token: ${{ secrets.WORKFLOW_TOKEN }}
         if: ${{ env.REFRESH_DB == 'true' }} # || github.ref == 'refs/heads/main'
 
       - name: Terraform Prep DB
