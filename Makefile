@@ -1,4 +1,4 @@
-C_GREEN ?= \e[32m
+C_GREEN ?= \e[92m
 C_RESET ?= \e[0m
 DOCKERTF = docker-compose run --rm tf
 DOCKERAWS = docker-compose run --rm aws
@@ -27,9 +27,7 @@ prep_db: init
 	$(DOCKERTF) plan -var tasktemplate=cdprep.json -out ./db.plan
 	$(DOCKERTF) apply ./db.plan
 	@echo "${C_GREEN} Preparing database, please wait... ${C_RESET}"
-	sleep 90
-	$(DOCKERTF) plan -target module.ecsservice -out ./db.plan -destroy
-	$(DOCKERTF) apply ./db.plan
+	@sleep 90
 .PHONY: prep_db
 
 
@@ -40,9 +38,8 @@ serve: init
 
 
 dnsname:
-	@echo ====================================================================
-	@echo "Please open your browser and visit:"
 	@$(DOCKERAWS) elbv2 describe-load-balancers --name srvntchall-alb --query 'LoadBalancers[*].DNSName' | sed 's/"//g'
+	@echo "${C_GREEN}Please open your browser and visit the address above"
 	@echo ====================================================================
 .PHONY: dnsname
 
