@@ -15,7 +15,7 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   TF_BACKEND_BUCKET: andreazza
   TF_BACKEND_KEY: srvntechchallenge
-  REFRESH_DB: true
+  REFRESH_DB: false
   DESTROY: false
 
 
@@ -75,7 +75,7 @@ jobs:
       - name: Update var
         if: ${{ env.REFRESH_DB == 'true' }} 
         run: |
-          sed -i "s/REFRESH_DB: true/REFRESH_DB: false/" .github/workflows/main.yml
+          sed -i "s/REFRESH_DB: false/REFRESH_DB: false/" .github/workflows/main.yml
           git config --local user.email "$(git log --format='%ae' HEAD^!)"
           git config --local user.name "$(git log --format='%an' HEAD^!)"
           git add .
