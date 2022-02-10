@@ -58,6 +58,8 @@ jobs:
   prep_db:
     name: Terraform Prep DB
     runs-on: ubuntu-latest
+    env:
+      github_token: ${{ secrets.WORKFLOW_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -71,7 +73,6 @@ jobs:
       - name: Update var
         if: ${{ env.REFRESH_DB == 'true' }} 
         run: |
-          ls
           sed -i "s/REFRESH_DB: true/REFRESH_DB: false/" .github/workflows/main.yml
           git config --local user.email "$(git log --format='%ae' HEAD^!)"
           git config --local user.name "$(git log --format='%an' HEAD^!)"
