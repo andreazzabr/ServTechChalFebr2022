@@ -40,7 +40,7 @@ jobs:
         if: ${{ env.RUN_PIPELINE == 'true' }}
         run: make plan_infra
 
-      - name: Upload artifact
+      - name: Upload plan artifact
         if: ${{ env.RUN_PIPELINE == 'true' }}
         uses: actions/upload-artifact@v2
         with:
@@ -57,7 +57,7 @@ jobs:
         if: ${{ env.RUN_PIPELINE == 'true' }}
         uses: actions/checkout@v2
 
-      - name: Download a single artifact
+      - name: Download plan artifact
         if: ${{ env.RUN_PIPELINE == 'true' }}
         uses: actions/download-artifact@v2
         with:
@@ -76,23 +76,10 @@ jobs:
       - name: Checkout
         if: ${{ env.UPDATE_DB == 'true' }} && ${{ env.RUN_PIPELINE == 'true' }}
         uses: actions/checkout@v2
-        with:
-          token: ${{ secrets.WORKFLOW_TOKEN }}
 
       - name: Terraform Prep DB
         if: ${{ env.UPDATE_DB == 'true' }} && ${{ env.RUN_PIPELINE == 'true' }}
         run: make prep_db
-
-      - name: "Update var: Update_DB"
-        if: ${{ env.UPDATE_DB == 'true' }} && ${{ env.RUN_PIPELINE == 'true' }}
-        run: |
-          sed -i "19,27 s/UPDATE_DB: true/UPDATE_DB: false/" .github/workflows/main.yml
-          sed -i "19,27 s/RUN_PIPELINE: true/RUN_PIPELINE: false/" .github/workflows/main.yml
-          git config --local user.email "$(git log --format='%ae' HEAD^!)"
-          git config --local user.name "$(git log --format='%an' HEAD^!)"
-          git add .
-          git commit -m "Refresh DB Variable change"
-          git push
 
   serve:
     name: "Serving APP"
@@ -119,20 +106,30 @@ jobs:
       - name: Checkout
         if: ${{ env.DESTROY == 'true' }} && ${{ env.RUN_PIPELINE == 'true' }}
         uses: actions/checkout@v2
-        with:
-          token: ${{ secrets.WORKFLOW_TOKEN }}
       
       - name: Terraform Destroy Infra
         if: ${{ env.DESTROY == 'true' }} && ${{ env.RUN_PIPELINE == 'true' }}
         run: make destroy
 
-      - name: "Update var: Destroy"
-        if: ${{ env.DESTROY == 'true' }} && ${{ env.RUN_PIPELINE == 'true' }}
+  update_vars:
+    name: "Update Variables"
+    runs-on: ubuntu-latest
+    needs: destroy
+    steps:
+      - name: Checkout
+        if: ${{ env.RUN_PIPELINE == 'true' }}
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.WORKFLOW_TOKEN }}
+
+      - name: "Update variables"
+        if: ${{ env.RUN_PIPELINE == 'true' }}
         run: |
+          sed -i "19,27 s/UPDATE_DB: true/UPDATE_DB: false/" .github/workflows/main.yml
           sed -i "19,27 s/DESTROY: true/DESTROY: false/" .github/workflows/main.yml
           sed -i "19,27 s/RUN_PIPELINE: true/RUN_PIPELINE: false/" .github/workflows/main.yml
           git config --local user.email "$(git log --format='%ae' HEAD^!)"
           git config --local user.name "$(git log --format='%an' HEAD^!)"
           git add .
-          git commit -m "Destroy Variable change"
+          git commit -m "Variables change"
           git push
