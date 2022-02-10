@@ -20,8 +20,8 @@ env:
   AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
   TF_BACKEND_BUCKET: ${{ secrets.TF_BACKEND_BUCKET }}
   TF_BACKEND_KEY: ${{ secrets.TF_BACKEND_KEY }}
-  REFRESH_DB: false
-  DESTROY: true
+  REFRESH_DB: true
+  DESTROY: false
 
 
 jobs:
