@@ -40,7 +40,7 @@ serve: init
 dnsname:
 	@$(DOCKERAWS) elbv2 describe-load-balancers --name srvntchall-alb --query 'LoadBalancers[*].DNSName' | sed 's/"//g'
 	@echo "${C_GREEN}Please open your browser and visit the address above"
-	@echo ====================================================================
+	@echo "${C_GREEN}===================================================================="
 .PHONY: dnsname
 
 

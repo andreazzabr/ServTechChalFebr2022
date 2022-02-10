@@ -21,7 +21,7 @@ env:
   TF_BACKEND_BUCKET: ${{ secrets.TF_BACKEND_BUCKET }}
   TF_BACKEND_KEY: ${{ secrets.TF_BACKEND_KEY }}
   REFRESH_DB: false
-  DESTROY: false
+  DESTROY: true
 
 
 jobs:
@@ -93,9 +93,10 @@ jobs:
         uses: actions/checkout@v2
       
       - name: Terraform Apply Infra
-        run: |
-          make serve
-          make dnsname
+        run: make serve
+
+      - name: Load Balancer Public Address
+        run: make dnsname
 
   destroy_everything:
     name: "Destroy everything"
