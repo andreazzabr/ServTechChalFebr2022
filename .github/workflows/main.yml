@@ -20,7 +20,7 @@ env:
   AWS_DEFAULT_REGION: ap-southeast-2
   TF_BACKEND_BUCKET: ${{ secrets.TF_BACKEND_BUCKET }}
   TF_BACKEND_KEY: ${{ secrets.TF_BACKEND_KEY }}
-  REFRESH_DB: true
+  REFRESH_DB: false
   DESTROY: false
 
 
