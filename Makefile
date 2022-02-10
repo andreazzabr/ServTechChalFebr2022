@@ -27,7 +27,7 @@ prep_db: init
 	$(DOCKERTF) plan -var tasktemplate=cdprep.json -out ./db.plan
 	$(DOCKERTF) apply ./db.plan
 	@echo "${C_GREEN} Preparing database, please wait... ${C_RESET}"
-	@sleep 90
+	@sleep 60
 .PHONY: prep_db
 
 
