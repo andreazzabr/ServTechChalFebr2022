@@ -34,22 +34,19 @@ prep_db: init
 
 
 serve: init
-	# $(DOCKERTF) plan -target module.ecsservice -out ./serve.plan -destroy
-	# $(DOCKERTF) apply ./serve.plan
 	$(DOCKERTF) plan -target module.ecsservice -out ./serve.plan
 	$(DOCKERTF) apply ./serve.plan
 .PHONY: serve
 
 
 dnsname:
-	@echo "${C_GREEN} Please open your browser and visit:"
-	@$(DOCKERAWS) elbv2 describe-load-balancers --name srvntchall-alb | grep DNSName
-	@echo "${C_RESET}"
+	@echo ====================================================================
+	@echo "Please open your browser and visit:"
+	@$(DOCKERAWS) elbv2 describe-load-balancers --name srvntchall-alb --query 'LoadBalancers[*].DNSName' | sed 's/"//g'
+	@echo ====================================================================
 .PHONY: dnsname
 
 
 destroy: init
 	$(DOCKERTF) destroy -auto-approve
 .PHONY: destroy
-
-
