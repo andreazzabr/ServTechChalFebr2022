@@ -104,11 +104,11 @@ jobs:
     needs: serve
     steps:
       - name: Checkout
-        if: ${{ env.DESTROY == 'true' }} && ${{ env.RUN_PIPELINE == 'true' }}
+        if: ${{ env.DESTROY == 'true' && env.RUN_PIPELINE == 'true' }}
         uses: actions/checkout@v2
       
       - name: Terraform Destroy Infra
-        if: ${{ env.DESTROY == 'true' }} && ${{ env.RUN_PIPELINE == 'true' }}
+        if: ${{ env.DESTROY == 'true' && env.RUN_PIPELINE == 'true' }}
         run: make destroy
 
   update_vars:
