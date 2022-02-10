@@ -15,13 +15,13 @@ on:
     branches:
       - main
 env:
+  TF_BACKEND_BUCKET: ${{ secrets.TF_BACKEND_BUCKET }}
+  TF_BACKEND_KEY: ${{ secrets.TF_BACKEND_KEY }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_DEFAULT_REGION: ap-southeast-2
-  TF_BACKEND_BUCKET: ${{ secrets.TF_BACKEND_BUCKET }}
-  TF_BACKEND_KEY: ${{ secrets.TF_BACKEND_KEY }}
-  REFRESH_DB: false
-  DESTROY: true
+  UPDATE_DB: true
+  DESTROY: false
 
 
 jobs:
@@ -65,19 +65,19 @@ jobs:
     needs: infra_apply
     steps:
       - name: Checkout
-        if: ${{ env.REFRESH_DB == 'true' }}
+        if: ${{ env.UPDATE_DB == 'true' }}
         uses: actions/checkout@v2
         with:
           token: ${{ secrets.WORKFLOW_TOKEN }}
 
       - name: Terraform Prep DB
-        if: ${{ env.REFRESH_DB == 'true' }} 
+        if: ${{ env.UPDATE_DB == 'true' }} 
         run: make prep_db
 
-      - name: Update Refresh DB var
-        if: ${{ env.REFRESH_DB == 'true' }} 
+      - name: "Update var: Update_DB"
+        if: ${{ env.UPDATE_DB == 'true' }} 
         run: |
-          sed -i "17,25 s/REFRESH_DB: true/REFRESH_DB: false/" .github/workflows/main.yml
+          sed -i "17,25 s/UPDATE_DB: true/UPDATE_DB: false/" .github/workflows/main.yml
           git config --local user.email "$(git log --format='%ae' HEAD^!)"
           git config --local user.name "$(git log --format='%an' HEAD^!)"
           git add .
@@ -106,12 +106,14 @@ jobs:
       - name: Checkout
         if: ${{ env.DESTROY == 'true' }}
         uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.WORKFLOW_TOKEN }}
       
       - name: Terraform Destroy Infra
         if: ${{ env.DESTROY == 'true' }}
         run: make destroy
 
-      - name: Update Destroy var
+      - name: "Update var: Destroy"
         if: ${{ env.DESTROY == 'true' }} 
         run: |
           sed -i "17,25 s/DESTROY: true/DESTROY: false/" .github/workflows/main.yml
