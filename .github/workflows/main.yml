@@ -15,7 +15,7 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   TF_BACKEND_BUCKET: andreazza
   TF_BACKEND_KEY: srvntechchallenge
-  REFRESH_DB: true
+  REFRESH_DB: false
   DESTROY: false
 
 
@@ -58,11 +58,9 @@ jobs:
   prep_db:
     name: Terraform Prep DB
     runs-on: ubuntu-latest
-    # env:
-    #   workflow_token: ${{ secrets.WORKFLOW_TOKEN }}
     steps:
       - name: Checkout
-        if: ${{ env.REFRESH_DB == 'true' }} # || github.ref == 'refs/heads/main'
+        if: ${{ env.REFRESH_DB == 'true' }}
         uses: actions/checkout@v2
         with:
           token: ${{ secrets.WORKFLOW_TOKEN }}
@@ -88,6 +86,7 @@ jobs:
 
   destroy_everything:
     name: "Destroy everything"
+    if: ${{ env.DESTROY == 'true' }}
     runs-on: ubuntu-latest
     # needs: infra_apply
     steps:
