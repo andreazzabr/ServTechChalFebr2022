@@ -1,17 +1,17 @@
 name: "Servian TechChallenge"
 on:
   push:
-    # paths:
-    # - 'terraform/**'
-    # - docker-compose.yml
-    # - Makefile
+    paths:
+    - 'terraform/**'
+    - docker-compose.yml
+    - Makefile
     branches:
       - main
   pull_request:
-    # paths:
-    # - 'terraform/**'
-    # - docker-compose.yml
-    # - Makefile
+    paths:
+    - 'terraform/**'
+    - docker-compose.yml
+    - Makefile
     branches:
       - main
 env:
@@ -22,11 +22,9 @@ env:
   AWS_DEFAULT_REGION: ap-southeast-2
   UPDATE_DB: false
   DESTROY: true
-  RUN_PIPELINE: true
+
 
 jobs:
-  if: ${{ RUN_PIPELINE == 'true' }}
-
   infra_plan:
     name: "TF Plan Infra"
     runs-on: ubuntu-latest
@@ -123,25 +121,4 @@ jobs:
           git config --local user.name "$(git log --format='%an' HEAD^!)"
           git add .
           git commit -m "Destroy Variable change"
-          git push
-
-  run_pipeline:
-    name: "Run Pipeline var"
-    runs-on: ubuntu-latest
-    needs: destroy
-    steps:
-      - name: Checkout
-        if: ${{ env.RUN_PIPELINE == 'true' }}
-        uses: actions/checkout@v2
-        with:
-          token: ${{ secrets.WORKFLOW_TOKEN }}
-
-      - name: "Update var: Run Pipeline"
-        if: ${{ env.RUN_PIPELINE == 'true' }} 
-        run: |
-          sed -i "17,25 s/RUN_PIPELINE: true/RUN_PIPELINE: false/" .github/workflows/main.yml
-          git config --local user.email "$(git log --format='%ae' HEAD^!)"
-          git config --local user.name "$(git log --format='%an' HEAD^!)"
-          git add .
-          git commit -m "Run Pipeline Variable change"
           git push
