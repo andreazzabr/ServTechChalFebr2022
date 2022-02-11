@@ -23,8 +23,8 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_DEFAULT_REGION: ap-southeast-2
   UPDATE_DB: false
-  DESTROY: false
-  RUN_PIPELINE: false
+  DESTROY: true
+  RUN_PIPELINE: true
 
 
 jobs:
@@ -131,5 +131,5 @@ jobs:
           git config --local user.email "$(git log --format='%ae' HEAD^!)"
           git config --local user.name "$(git log --format='%an' HEAD^!)"
           git add .
-          git commit -m "Variables change"
+          git commit -m "Variables change - False Run"
           git push
