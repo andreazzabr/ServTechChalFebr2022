@@ -1,6 +1,5 @@
 resource "aws_ecs_cluster" "ecscluster" {
   name = "${var.projectname}-cluster"
-  # capacity_providers = ["FARGATE"]
 }
 resource "aws_security_group" "ecssg" {
     name = "${var.projectname}-ecssg"

@@ -6,7 +6,7 @@ resource "aws_db_instance" "rdsinst" {
     engine_version = var.dbengineversion
     db_subnet_group_name = aws_db_subnet_group.dbsubnetgroup.name
     vpc_security_group_ids = [aws_security_group.rdssg.id]
-    name = var.dbname
+    db_name = var.dbname
     username = var.dbusername
     password = aws_ssm_parameter.dbpassword.value
     skip_final_snapshot = var.skipfinalsnapshot
