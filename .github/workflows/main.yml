@@ -23,8 +23,8 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_DEFAULT_REGION: ap-southeast-2
   UPDATE_DB: false
-  DESTROY: false
-  RUN_PIPELINE: false
+  DESTROY: true
+  RUN_PIPELINE: true
 
 
 jobs:
