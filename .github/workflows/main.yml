@@ -24,7 +24,6 @@ env:
   AWS_DEFAULT_REGION: ap-southeast-2
   UPDATE_DB: false
   DESTROY: false
-  RUN_PIPELINE: false
 
 
 jobs:
@@ -33,15 +32,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        if: ${{ env.RUN_PIPELINE == 'true' }}
         uses: actions/checkout@v2
 
       - name: Terraform Plan Infra
-        if: ${{ env.RUN_PIPELINE == 'true' }}
         run: make plan_infra
 
       - name: Upload plan artifact
-        if: ${{ env.RUN_PIPELINE == 'true' }}
         uses: actions/upload-artifact@v2
         with:
           name: infra plan
@@ -54,18 +50,15 @@ jobs:
     needs: infra_plan
     steps:
       - name: Checkout
-        if: ${{ env.RUN_PIPELINE == 'true' }}
         uses: actions/checkout@v2
 
       - name: Download plan artifact
-        if: ${{ env.RUN_PIPELINE == 'true' }}
         uses: actions/download-artifact@v2
         with:
           name: infra plan
           path: terraform
       
       - name: Terraform Apply Infra
-        if: ${{ env.RUN_PIPELINE == 'true' }}
         run: make apply_infra
 
   prep_db:
@@ -74,11 +67,11 @@ jobs:
     needs: infra_apply
     steps:
       - name: Checkout
-        if: ${{ env.UPDATE_DB == 'true' && env.RUN_PIPELINE == 'true' }}
+        if: ${{ env.UPDATE_DB == 'true' }}
         uses: actions/checkout@v2
 
       - name: Terraform Prep DB
-        if: ${{ env.UPDATE_DB == 'true' && env.RUN_PIPELINE == 'true' }}
+        if: ${{ env.UPDATE_DB == 'true' }}
         run: make prep_db
 
   serve:
@@ -87,15 +80,12 @@ jobs:
     needs: prep_db
     steps:
       - name: Checkout
-        if: ${{ env.RUN_PIPELINE == 'true' }}
         uses: actions/checkout@v2
       
       - name: Terraform Apply Infra
-        if: ${{ env.RUN_PIPELINE == 'true' }}
         run: make serve
 
       - name: Load Balancer Public Address
-        if: ${{ env.RUN_PIPELINE == 'true' }}
         run: make dnsname
 
   destroy:
@@ -104,11 +94,11 @@ jobs:
     needs: serve
     steps:
       - name: Checkout
-        if: ${{ env.DESTROY == 'true' && env.RUN_PIPELINE == 'true' }}
+        if: ${{ env.DESTROY == 'true' }}
         uses: actions/checkout@v2
       
       - name: Terraform Destroy Infra
-        if: ${{ env.DESTROY == 'true' && env.RUN_PIPELINE == 'true' }}
+        if: ${{ env.DESTROY == 'true' }}
         run: make destroy
 
   update_vars:
@@ -117,19 +107,18 @@ jobs:
     needs: destroy
     steps:
       - name: Checkout
-        if: ${{ env.RUN_PIPELINE == 'true' }}
+        if: ${{ env.UPDATE_DB == 'true' || env.DESTROY == 'true' }}
         uses: actions/checkout@v2
         with:
           token: ${{ secrets.WORKFLOW_TOKEN }}
 
       - name: "Update variables"
-        if: ${{ env.RUN_PIPELINE == 'true' }}
+        if: ${{ env.UPDATE_DB == 'true' || env.DESTROY == 'true' }}
         run: |
           sed -i "19,27 s/UPDATE_DB: true/UPDATE_DB: false/" .github/workflows/main.yml
           sed -i "19,27 s/DESTROY: true/DESTROY: false/" .github/workflows/main.yml
-          sed -i "19,27 s/RUN_PIPELINE: true/RUN_PIPELINE: false/" .github/workflows/main.yml
           git config --local user.email "$(git log --format='%ae' HEAD^!)"
           git config --local user.name "$(git log --format='%an' HEAD^!)"
           git add .
-          git commit -m "Variables change - False Run"
+          git commit -m "Variables change [ci skip]"
           git push
